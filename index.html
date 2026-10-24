@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>VIP Access Admin Panel | Control Center</title>
-  
-  <!-- Fonts & Icons -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Admin OS | VIP Access</title>
+
+  <!-- Google Fonts for OS Native Look -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Firebase App & Services -->
@@ -18,1017 +20,1238 @@
 
   <style>
     :root {
-      /* Dynamic Theme Variables - Can be changed via Settings */
-      --bg-base: #08090e;
-      --bg-gradient-top: #17192f;
-      --accent-primary: #8b5cf6;
+      /* OS Native Colors */
+      --os-bg: #f2f2f7;
+      --os-surface: #ffffff;
+      --os-primary: #007aff;
+      --os-danger: #ff3b30;
+      --os-success: #34c759;
+      --os-text-main: #000000;
+      --os-text-sub: #8e8e93;
+      --os-border: #e5e5ea;
       
-      --bg-surface: #10121d;
-      --bg-glass: rgba(18, 21, 35, 0.82);
-      --border-color: rgba(255, 255, 255, 0.1);
-      
-      --accent-cyan: #06b6d4;
-      --accent-pink: #ec4899;
-      --accent-emerald: #10b981;
-      --accent-rose: #f43f5e;
-      
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-vip: 0 8px 32px 0 rgba(0, 0, 0, 0.55), 0 0 18px 0 rgba(0, 0, 0, 0.2);
+      --safe-area-bottom: 20px;
+    }
+
+    body.dark-theme {
+      --os-bg: #000000;
+      --os-surface: #1c1c1e;
+      --os-primary: #0a84ff;
+      --os-text-main: #ffffff;
+      --os-text-sub: #98989d;
+      --os-border: #38383a;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      font-family: 'Outfit', sans-serif;
-      background: radial-gradient(circle at top center, var(--bg-gradient-top) 0%, var(--bg-base) 65%);
-      color: var(--text-main);
+      background-color: var(--os-bg);
+      color: var(--os-text-main);
+      display: flex;
+      justify-content: center;
       min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.5;
-      transition: background 0.5s ease;
-    }
-
-    .ambient-glow {
-      position: fixed;
-      width: 420px;
-      height: 420px;
-      border-radius: 50%;
-      filter: blur(130px);
-      opacity: 0.18;
-      pointer-events: none;
-      z-index: 0;
-      transition: background-color 0.5s ease;
-    }
-    .glow-1 { top: -100px; left: -100px; background: var(--accent-primary); }
-    .glow-2 { bottom: -100px; right: -100px; background: var(--accent-cyan); }
-
-    .vip-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 10px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff;
-    }
-    .vip-title-font {
-      font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 0.5px;
-    }
-
-    .glass-panel {
-      background: var(--bg-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-vip);
-    }
-
-    /* Auth Screen */
-    #auth-view {
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      background: radial-gradient(circle at center, #151829 0%, #06070a 100%);
-    }
-    .auth-card {
-      width: 100%;
-      max-width: 440px;
-      padding: 2.5rem 2rem;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    }
-    .auth-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent-primary), var(--accent-cyan), var(--accent-pink));
-    }
-    
-    .btn-google {
-      width: 100%;
-      background: #ffffff;
-      color: #1f2937;
-      font-weight: 600;
-      font-size: 0.95rem;
-      padding: 0.85rem 1.25rem;
-      border-radius: var(--radius-sm);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
-      transition: var(--transition);
-    }
-    .btn-google:hover:not(:disabled) { background: #f3f4f6; transform: translateY(-1px); }
-    .google-icon-svg { width: 20px; height: 20px; }
-
-    /* Dashboard Nav */
-    #app-view {
-      display: none;
-      position: relative;
-      z-index: 1;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 1rem 1.25rem 4rem;
-    }
-    .nav-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .brand-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-sm);
-      background: var(--accent-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      color: #fff;
       overflow: hidden;
     }
-    .brand-icon img {
-      width: 100%; height: 100%; object-fit: cover; display: none;
-    }
-    
-    .nav-actions { display: flex; align-items: center; gap: 10px; }
-    
-    /* Global Status Indicator */
-    .global-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .status-on { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .status-off { background: rgba(244, 63, 94, 0.15); color: #fb7185; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .status-on .status-dot { background: #34d399; box-shadow: 0 0 8px #34d399; }
-    .status-off .status-dot { background: #fb7185; box-shadow: 0 0 8px #fb7185; }
 
-    /* Inputs */
-    input[type="text"], input[type="url"], input[type="number"], input[type="datetime-local"], select, textarea, input[type="color"] {
+    /* Mobile App Container Simulation */
+    .app-container {
       width: 100%;
-      background: rgba(10, 12, 20, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem 1rem;
-      color: var(--text-main);
-      font-family: inherit;
-      font-size: 0.92rem;
-      transition: var(--transition);
-      outline: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent-primary);
-      box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
-      background: rgba(15, 18, 30, 0.9);
-    }
-    input[type="color"] { padding: 4px; cursor: pointer; height: 45px; }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 0.75rem 1.25rem;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      border: none;
-      transition: var(--transition);
-    }
-    .btn-sm { padding: 0.45rem 0.85rem; font-size: 0.82rem; }
-    .btn-primary { background: var(--accent-primary); color: #fff; }
-    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
-    .btn-secondary { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; }
-    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
-    .btn-danger { background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); color: #fda4af; }
-    .btn-danger:hover { background: rgba(244, 63, 94, 0.3); color: #fff; }
-
-    /* Cards Grid */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-      gap: 1.25rem;
-    }
-    .item-card {
+      max-width: 500px; 
+      height: 100vh;
+      height: 100dvh;
+      background-color: var(--os-bg);
       position: relative;
-      border-radius: var(--radius-md);
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: var(--transition);
-      border: 1px solid var(--border-color);
-    }
-    .item-card:hover { transform: translateY(-3px); border-color: var(--accent-primary); box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
-    .card-thumb-wrap { position: relative; width: 100%; height: 165px; background: #0d0f19; overflow: hidden; }
-    .card-thumb { width: 100%; height: 100%; object-fit: cover; }
-    
-    .status-pill {
-      position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 999px;
-      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; backdrop-filter: blur(8px);
-    }
-    .card-content { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-    .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
-    .card-actions { display: flex; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1rem; margin-top: 1rem;}
-
-    /* Modals */
-    .modal-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px); z-index: 1000; padding: 1rem;
-      align-items: center; justify-content: center;
-    }
-    .modal-dialog {
-      width: 100%; max-width: 620px; max-height: 90vh; overflow-y: auto;
-      border-radius: var(--radius-lg); padding: 1.75rem; position: relative;
-    }
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .close-modal-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; cursor: pointer; }
-    .close-modal-btn:hover { color: #fff; }
-    
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .col-span-2 { grid-column: span 2; }
-    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.4rem; color: var(--text-muted); }
-    
-    /* HTML Code Input */
-    .code-editor {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.85rem;
-      background: #050608 !important;
-      color: #a5b4fc !important;
-      border-left: 3px solid var(--accent-primary) !important;
-      white-space: pre;
-      overflow-wrap: normal;
-      overflow-x: auto;
+      box-shadow: 0 0 40px rgba(0,0,0,0.2);
     }
 
-    /* Action Type Selector */
-    .action-type-tabs {
+    /* Top App Bar */
+    .app-bar {
+      background-color: rgba(28, 28, 30, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 16px 20px;
       display: flex;
-      background: rgba(0,0,0,0.4);
-      border-radius: var(--radius-sm);
-      padding: 4px;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--os-border);
+    }
+    .app-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; display:flex; align-items:center; gap:8px;}
+    .app-title i { color: var(--os-primary); }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      padding-bottom: 90px;
+      scrollbar-width: none;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    /* Tabs (Pages) */
+    .tab-view { display: none; animation: fade-in 0.3s ease; }
+    .tab-view.active { display: block; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(28, 28, 30, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--os-border);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 10px calc(12px + env(safe-area-inset-bottom, 10px));
+      z-index: 50;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--os-text-sub);
+      font-size: 0.65rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 60px;
+    }
+    .nav-item i { font-size: 1.25rem; margin-bottom:2px; }
+    .nav-item.active { color: var(--os-primary); }
+    .nav-item:active { transform: scale(0.9); }
+
+    /* Floating Action Button (FAB) */
+    .fab {
+      position: absolute;
+      bottom: 85px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: var(--os-primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 15px rgba(10, 132, 255, 0.4);
+      cursor: pointer;
+      z-index: 40;
+      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .fab:active { transform: scale(0.9); }
+    .fab.hidden { transform: scale(0); pointer-events: none; }
+
+    /* Native App Cards (List Items) */
+    .list-card {
+      background: var(--os-surface);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 16px;
+      border: 1px solid var(--os-border);
+      position: relative;
+      overflow: hidden;
+    }
+    .list-card-img {
+      width: 80px; height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #333;
+    }
+    .list-card-content { flex: 1; display:flex; flex-direction:column; justify-content:center;}
+    .list-card-title { font-weight: 600; font-size: 1rem; margin-bottom: 4px; line-height: 1.2;}
+    .list-card-sub { font-size: 0.8rem; color: var(--os-text-sub); display: flex; gap: 8px; align-items:center;}
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-active { background: var(--os-success); box-shadow: 0 0 5px var(--os-success);}
+    
+    .list-actions { display: flex; flex-direction: column; gap: 8px; justify-content: center;}
+    .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: var(--os-text-main); font-size: 0.9rem; cursor: pointer; display:flex; align-items:center; justify-content:center;}
+    .icon-btn.edit { color: var(--os-primary); background: rgba(10, 132, 255, 0.1); }
+    .icon-btn.delete { color: var(--os-danger); background: rgba(255, 59, 48, 0.1); }
+
+    /* OS Style Settings Groups */
+    .settings-group {
+      background: var(--os-surface);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      border: 1px solid var(--os-border);
+    }
+    .settings-group-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--os-text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       margin-bottom: 8px;
+      margin-left: 16px;
+      margin-top: 16px;
     }
-    .action-tab {
+    .setting-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--os-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .setting-item.vertical {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .setting-item:last-child { border-bottom: none; }
+    .setting-label { font-weight: 500; font-size: 0.95rem; display:flex; align-items:center; gap:12px; }
+    .setting-label i { color: var(--os-primary); width: 20px; text-align:center;}
+    .setting-desc { font-size: 0.75rem; color: var(--os-text-sub); margin-top: 4px; font-weight: 400;}
+
+    /* Inputs & Forms */
+    .input-field {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--os-text-main);
+      font-size: 0.95rem;
+      text-align: right;
+      outline: none;
+    }
+    .input-field::placeholder { color: var(--os-text-sub); }
+    .input-block {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--os-border);
+      border-radius: 12px; padding: 14px; color: var(--os-text-main);
+      font-size: 0.95rem; outline: none; margin-bottom: 16px;
+    }
+    
+    /* OS Switch Toggle */
+    .os-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 30px;
+    }
+    .os-switch input { opacity: 0; width: 0; height: 0; }
+    .os-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background-color: rgba(255,255,255,0.1); border-radius: 34px; transition: .3s;
+      border: 1px solid var(--os-border);
+    }
+    .os-slider:before {
+      position: absolute; content: ""; height: 26px; width: 26px;
+      left: 1px; bottom: 1px; background-color: white; border-radius: 50%;
+      transition: .3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    input:checked + .os-slider { background-color: var(--os-success); border-color: var(--os-success); }
+    input:checked + .os-slider:before { transform: translateX(20px); }
+
+    /* Segmented Control (Tabs inside forms) */
+    .segmented-control {
+      display: flex; background: rgba(255,255,255,0.05); padding: 4px;
+      border-radius: 10px; margin-bottom: 16px; border: 1px solid var(--os-border);
+    }
+    .seg-btn {
       flex: 1; text-align: center; padding: 8px; font-size: 0.85rem; font-weight: 600;
-      cursor: pointer; border-radius: 6px; color: var(--text-muted); transition: var(--transition);
+      color: var(--os-text-sub); border-radius: 8px; transition: 0.2s; cursor:pointer;
     }
-    .action-tab.active { background: var(--accent-primary); color: #fff; }
+    .seg-btn.active { background: var(--os-surface); color: var(--os-text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-    /* Custom HTML Preview Iframe */
-    .html-preview-frame {
-      width: 100%; height: 60vh; border: none; border-radius: var(--radius-sm);
-      background: #fff; /* White background for correct HTML rendering */
+    /* Button Standard */
+    .btn-main {
+      width: 100%; padding: 14px 16px; border-radius: 14px; border: none;
+      background: var(--os-primary); color: #fff; font-size: 1rem; font-weight: 600;
+      cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
     }
+    .btn-main:active { opacity: 0.8; transform: scale(0.98); }
+    .btn-main.small { padding: 10px 14px; width: auto; font-size: 0.9rem; }
+    
+    /* Bottom Sheet Modal (OS Native Style) */
+    .bottom-sheet-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000;
+      opacity: 0; pointer-events: none; transition: 0.3s;
+      display:flex; align-items:flex-end; justify-content:center;
+    }
+    .bottom-sheet-overlay.active { opacity: 1; pointer-events: auto; }
+    
+    .bottom-sheet {
+      width: 100%; max-width: 500px; max-height: 90vh;
+      background: var(--os-surface); border-radius: 24px 24px 0 0;
+      transform: translateY(100%); transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
+    
+    .sheet-header {
+      padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--os-border); position: sticky; top:0; background: var(--os-surface); z-index:2;
+    }
+    .sheet-title { font-size: 1.1rem; font-weight: 600; }
+    .sheet-close { color: var(--os-text-sub); font-size: 1rem; cursor: pointer; background:none; border:none; padding:8px; font-weight:600;}
+    .sheet-close.action { color: var(--os-primary); }
+    
+    .sheet-content { padding: 20px; overflow-y: auto; flex:1; scrollbar-width:none;}
 
-    /* Toasts */
-    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+    /* Simple Toast */
     .toast {
-      padding: 12px 18px; border-radius: var(--radius-sm); background: #15192c; color: #fff;
-      display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-      border-left: 4px solid var(--accent-primary); animation: toastIn 0.3s ease forwards;
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: rgba(44, 44, 46, 0.95); backdrop-filter: blur(10px);
+      color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 500; font-size: 0.9rem;
+      z-index: 9999; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items:center; gap:10px;
     }
-    @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-    /* Switch */
-    .switch-wrap { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.15); border-radius: 34px; transition: .3s; }
-    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .3s; }
-    input:checked + .slider { background-color: var(--accent-primary); }
-    input:checked + .slider:before { transform: translateX(20px); }
-
-    @media (max-width: 680px) {
-      .form-grid { grid-template-columns: 1fr; }
-      .col-span-2 { grid-column: span 1; }
-      .nav-bar { flex-direction: column; gap: 1rem; align-items: stretch; }
-      .nav-actions { justify-content: center; flex-wrap: wrap; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    
+    /* Login Screen Overlay */
+    #auth-screen {
+      position: absolute; inset: 0; background: var(--os-bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+    }
+    
+    /* Full Screen Loader */
+    .loading-overlay {
+      position: absolute; inset:0; background: rgba(0,0,0,0.5); z-index: 2000;
+      display:none; justify-content:center; align-items:center; color:#fff;
     }
   </style>
 </head>
-<body>
+<body class="dark-theme">
 
-  <div class="ambient-glow glow-1"></div>
-  <div class="ambient-glow glow-2"></div>
-  <div id="toast-container"></div>
+  <!-- Loader Overlay for Uploads/Saving -->
+  <div id="loading-overlay" class="loading-overlay">
+    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+  </div>
 
-  <!-- 1. ADMIN AUTH SCREEN -->
-  <section id="auth-view">
-    <div class="auth-card glass-panel">
-      <div style="margin-bottom: 2rem;">
-        <div style="font-size: 2.8rem; color: var(--accent-cyan); margin-bottom: 0.5rem;"><i class="fa-solid fa-crown"></i></div>
-        <h2 class="vip-title-font" style="font-size: 2rem; font-weight: 700;">VIP ADMIN ACCESS</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Exclusive Management Portal</p>
+  <!-- Mobile App Wrapper -->
+  <div class="app-container">
+    
+    <!-- Top Bar -->
+    <div class="app-bar" id="app-header">
+      <div class="app-title"><i class="fa-solid fa-shield-halved"></i> Admin OS</div>
+      <div style="display:flex; gap:15px; align-items:center;">
+        <span id="header-status-indicator" style="width:10px;height:10px;border-radius:50%;background:var(--os-success);box-shadow:0 0 8px var(--os-success);"></span>
+        <i class="fa-solid fa-arrow-right-from-bracket" style="color:var(--os-danger); cursor:pointer;" onclick="auth.signOut()"></i>
       </div>
-
-      <div id="login-error-msg" style="display:none; background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); padding:10px; border-radius:8px; margin-bottom:15px; color:#fda4af; font-size:0.85rem; text-align:left;">
-        <i class="fa-solid fa-circle-exclamation"></i> <span id="login-error-text"></span>
-      </div>
-
-      <button type="button" id="btn-google-login" class="btn-google" style="margin-bottom: 1.5rem;">
-        <svg class="google-icon-svg" viewBox="0 0 48 48">
-          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-        </svg>
-        <span id="google-btn-text">Continue with Google</span>
-      </button>
-      
-      <p style="font-size: 0.78rem; color: var(--text-dim);">Access is strictly restricted to master account</p>
     </div>
-  </section>
 
-  <!-- 2. MAIN DASHBOARD -->
-  <main id="app-view">
-    <header class="nav-bar glass-panel">
-      <div class="brand">
-        <div class="brand-icon">
-          <i class="fa-solid fa-shield-halved" id="brand-icon-default"></i>
-          <img id="brand-logo-img" src="" alt="Logo" />
-        </div>
-        <div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <h1 class="vip-title-font" id="brand-title" style="font-size: 1.5rem; line-height: 1;">FREE REDEEM CODE</h1>
-            <span class="vip-badge" style="font-size: 0.6rem; padding: 2px 8px;">ADMIN</span>
-          </div>
-          <div style="margin-top: 5px; display:flex; gap:10px; align-items:center;">
-             <!-- Global Online/Offline Badge -->
-             <div id="global-status-badge" class="global-status status-on">
-               <div class="status-dot"></div> <span id="global-status-text">ONLINE</span>
-             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="nav-actions">
-        <button class="btn btn-secondary btn-sm" onclick="openModal('settings-modal')">
-          <i class="fa-solid fa-gear"></i> Global Settings
-        </button>
-        <button class="btn btn-secondary btn-sm" onclick="openModal('categories-modal')">
-          <i class="fa-solid fa-tags"></i> Categories
-        </button>
-        <button class="btn btn-primary btn-sm" id="btn-add-card">
-          <i class="fa-solid fa-plus"></i> New Card
-        </button>
-        <button class="btn btn-danger btn-sm" id="btn-logout" title="Sign Out">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        </button>
-      </div>
-    </header>
-
-    <!-- Action Bar -->
-    <section class="glass-panel" style="padding: 1rem; margin-bottom: 1.5rem; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-      <input type="text" id="search-input" placeholder="Search cards..." style="flex:1; min-width:200px;" />
-      <select id="filter-category" style="max-width: 180px;">
-        <option value="ALL">All Categories</option>
-      </select>
-      <button class="btn btn-secondary" onclick="renderDashboard()"><i class="fa-solid fa-rotate"></i></button>
-    </section>
-
-    <!-- Cards Grid -->
-    <section class="cards-grid" id="cards-container">
-      <div style="grid-column: 1/-1; text-align:center; padding: 3rem; color: var(--text-muted);">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-        <p>Loading Dashboard...</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- 3. GLOBAL SETTINGS MODAL -->
-  <div class="modal-backdrop" id="settings-modal">
-    <div class="modal-dialog glass-panel" style="max-width: 500px;">
-      <div class="modal-header">
-        <h3 class="vip-title-font"><i class="fa-solid fa-sliders"></i> Global Customization</h3>
-        <button class="close-modal-btn" onclick="closeModal('settings-modal')"><i class="fa-solid fa-xmark"></i></button>
-      </div>
+    <!-- MAIN CONTENT VIEWS -->
+    <div class="content-area" id="main-scroll">
       
-      <form id="settings-form">
-        <div class="form-grid">
-          <div class="form-group col-span-2">
-            <label>Website Name / Header Title</label>
-            <input type="text" id="set-site-name" required placeholder="e.g. FF REWARDS HUB" />
+      <!-- TAB 1: DASHBOARD (Cards Management) -->
+      <div id="tab-home" class="tab-view active">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:16px;">
+          <h2 style="font-size: 1.5rem; font-weight:700;">All Rewards</h2>
+          <span style="font-size:0.8rem; color:var(--os-text-sub);" id="card-count-text">0 items</span>
+        </div>
+        
+        <div id="cards-container">
+          <!-- Cards injected here via JS -->
+          <div style="text-align:center; padding:40px; color:var(--os-text-sub);">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Loading data...
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: PAGE DESIGN (Hero & Footer) -->
+      <div id="tab-design" class="tab-view">
+        <h2 style="font-size: 1.5rem; font-weight:700; margin-bottom:16px;">Page Design</h2>
+        
+        <!-- Hero Section Settings -->
+        <div class="settings-group-title">Hero Section (Top View)</div>
+        <div class="settings-group" style="padding: 16px;">
+           <label style="font-size:0.8rem; color:var(--os-text-sub); font-weight:600; margin-bottom:8px; display:block;">Main Heading</label>
+           <input type="text" id="set-hero-heading" class="input-block" placeholder="Exclusive Rewards Hub" />
+           
+           <label style="font-size:0.8rem; color:var(--os-text-sub); font-weight:600; margin-bottom:8px; display:block;">Sub Heading / Description</label>
+           <input type="text" id="set-hero-sub" class="input-block" placeholder="Claim your premium items before the timer runs out." />
+        </div>
+
+        <!-- Footer Logo -->
+        <div class="settings-group-title">Footer Logo</div>
+        <div class="settings-group" style="padding: 16px;">
+          <label style="font-size:0.8rem; color:var(--os-text-sub); font-weight:600; margin-bottom:8px; display:block;">Footer Image URL (Optional)</label>
+          <div style="display:flex; gap:10px; width:100%;">
+             <input type="url" id="set-footer-logo-url" class="input-block" style="margin:0;" placeholder="https://...">
+             <label class="btn-main small" style="cursor:pointer;" title="Upload Image">
+               <i class="fa-solid fa-upload"></i>
+               <input type="file" id="set-footer-logo-file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'set-footer-logo-url')">
+             </label>
+          </div>
+        </div>
+
+        <!-- Footer Settings -->
+        <div class="settings-group-title">Footer Links (Quick Setup)</div>
+        <div class="settings-group" style="padding: 16px;">
+           <!-- Quick Links -->
+           <label style="font-size:0.8rem; color:var(--os-primary); font-weight:600; margin-bottom:8px; display:block;">Section 1: Quick Links</label>
+           <textarea id="set-footer-col1" class="input-block" rows="3" placeholder="Home, https://...\nEvents, https://..."></textarea>
+           
+           <!-- Support -->
+           <label style="font-size:0.8rem; color:var(--os-primary); font-weight:600; margin-bottom:8px; display:block;">Section 2: Support</label>
+           <textarea id="set-footer-col2" class="input-block" rows="3" placeholder="Help Center, https://...\nPrivacy, https://..."></textarea>
+           
+           <!-- Community -->
+           <label style="font-size:0.8rem; color:var(--os-primary); font-weight:600; margin-bottom:8px; display:block;">Section 3: Community</label>
+           <textarea id="set-footer-col3" class="input-block" rows="3" placeholder="Discord, https://...\nFacebook, https://..."></textarea>
+           
+           <p style="font-size:0.7rem; color:var(--os-text-sub); margin-bottom:15px;">Format: <code>Title, URL</code> (one per line)</p>
+           <button class="btn-main" onclick="saveDesignSettings()"><i class="fa-solid fa-check"></i> Save Design</button>
+        </div>
+      </div>
+
+      <!-- TAB 3: APP SETTINGS (Global, Theme, Security) -->
+      <div id="tab-settings" class="tab-view">
+        <h2 style="font-size: 1.5rem; font-weight:700; margin-bottom:16px;">System Settings</h2>
+        
+        <!-- Global & Theme -->
+        <div class="settings-group-title">Website Branding</div>
+        <div class="settings-group">
+          <!-- Toggle Site Name Visibility -->
+          <div class="setting-item">
+            <div>
+              <div class="setting-label"><i class="fa-solid fa-signature"></i> Show Site Name</div>
+              <div class="setting-desc">Show text name next to logo.</div>
+            </div>
+            <label class="os-switch"><input type="checkbox" id="set-show-name" checked><span class="os-slider"></span></label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label"><i class="fa-solid fa-globe"></i> Site Name Text</div>
+            <input type="text" id="set-site-name" class="input-field" style="width:50%;" placeholder="FF Rewards">
+          </div>
+
+          <!-- Toggle Header Logo Visibility -->
+          <div class="setting-item">
+            <div>
+              <div class="setting-label"><i class="fa-solid fa-eye"></i> Show Header Logo</div>
+              <div class="setting-desc">Show image logo in header.</div>
+            </div>
+            <label class="os-switch"><input type="checkbox" id="set-show-logo" checked><span class="os-slider"></span></label>
           </div>
           
-          <div class="form-group col-span-2">
-            <label>Logo Image URL (Leave blank for default icon)</label>
-            <div style="display:flex; gap:8px;">
-               <input type="url" id="set-logo-url" placeholder="https://..." />
-               <label class="btn btn-secondary" style="cursor:pointer; margin:0;" title="Upload Image (Converted to Base64)">
+          <div class="setting-item vertical">
+            <div class="setting-label"><i class="fa-solid fa-image"></i> Header Logo URL</div>
+            <div style="display:flex; gap:10px; width:100%;">
+               <input type="url" id="set-logo-url" class="input-block" style="margin:0;" placeholder="https://...">
+               <!-- Direct Upload Button (Base64) -->
+               <label class="btn-main small" style="cursor:pointer;" title="Upload Image from Gallery">
                  <i class="fa-solid fa-upload"></i>
-                 <input type="file" id="set-logo-file" accept="image/*" style="display:none;" />
+                 <input type="file" id="set-logo-file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'set-logo-url')">
                </label>
             </div>
-            <div id="set-logo-preview" style="margin-top:10px; max-width:80px; display:none;">
-              <img src="" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.2);" />
-            </div>
           </div>
 
-          <div class="form-group col-span-2" style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: var(--radius-sm);">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <label class="switch-wrap" style="margin: 0; color: #fff;">
-                <span class="switch">
-                  <input type="checkbox" id="set-global-status" />
-                  <span class="slider"></span>
-                </span>
-                <span style="font-weight:700;">Global Website Status (Online/Offline)</span>
-              </label>
-            </div>
-            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">Toggle this off to show maintenance/offline mode to users.</p>
+          <div class="setting-item">
+            <div class="setting-label"><i class="fa-solid fa-palette"></i> Primary Color</div>
+            <input type="color" id="set-theme-accent" style="border:none; background:transparent; width:30px; height:30px; cursor:pointer;" value="#00f2ea">
           </div>
-
-          <div class="form-group">
-            <label>Primary Theme Color</label>
-            <input type="color" id="set-theme-accent" value="#8b5cf6" />
-          </div>
-          <div class="form-group">
-            <label>Background Base Color</label>
-            <input type="color" id="set-theme-bg" value="#08090e" />
+          <div class="setting-item">
+            <div class="setting-label"><i class="fa-solid fa-fill-drip"></i> BG Color</div>
+            <input type="color" id="set-theme-bg" style="border:none; background:transparent; width:30px; height:30px; cursor:pointer;" value="#090910">
           </div>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('settings-modal')">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Apply & Save Settings</button>
+        <!-- Master Switch -->
+        <div class="settings-group-title">Maintenance Control</div>
+        <div class="settings-group">
+          <div class="setting-item">
+            <div>
+              <div class="setting-label"><i class="fa-solid fa-power-off"></i> Website Online</div>
+              <div class="setting-desc">Turn off to show Maintenance Mode.</div>
+            </div>
+            <label class="os-switch"><input type="checkbox" id="set-global-status"><span class="os-slider"></span></label>
+          </div>
         </div>
-      </form>
+
+        <!-- Security Features -->
+        <div class="settings-group-title">Content Security</div>
+        <div class="settings-group">
+          <div class="setting-item">
+            <div>
+              <div class="setting-label"><i class="fa-solid fa-copy"></i> Prevent Text Copy</div>
+              <div class="setting-desc">Stops users from copying text.</div>
+            </div>
+            <label class="os-switch"><input type="checkbox" id="set-sec-copy" checked><span class="os-slider"></span></label>
+          </div>
+          <div class="setting-item">
+            <div>
+              <div class="setting-label"><i class="fa-solid fa-hand"></i> Prevent Image Drag</div>
+              <div class="setting-desc">Stops users from dragging images.</div>
+            </div>
+            <label class="os-switch"><input type="checkbox" id="set-sec-drag" checked><span class="os-slider"></span></label>
+          </div>
+        </div>
+
+        <button class="btn-main" onclick="saveGlobalSettings()"><i class="fa-solid fa-cloud-arrow-up"></i> Save All Settings</button>
+        <br><br>
+      </div>
+
+    </div> <!-- End Content Area -->
+
+    <!-- FAB for adding Card -->
+    <div class="fab" id="fab-add" onclick="openCardEditor()"><i class="fa-solid fa-plus"></i></div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="switchTab('home', this)">
+        <i class="fa-solid fa-layer-group"></i><span>Cards</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('design', this)">
+        <i class="fa-solid fa-pen-ruler"></i><span>Design</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('settings', this)">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+      </div>
     </div>
   </div>
 
-  <!-- 4. ADD / EDIT CARD MODAL -->
-  <div class="modal-backdrop" id="card-modal">
-    <div class="modal-dialog glass-panel">
-      <div class="modal-header">
-        <h3 class="vip-title-font" id="modal-card-title">Card Editor</h3>
-        <button class="close-modal-btn" onclick="closeModal('card-modal')"><i class="fa-solid fa-xmark"></i></button>
+  <!-- AUTHENTICATION SCREEN -->
+  <div id="auth-screen">
+    <div style="text-align:center; max-width:300px;">
+      <i class="fa-solid fa-shield-halved fa-4x" style="color:var(--os-primary); margin-bottom:20px;"></i>
+      <h1 style="font-weight:700; font-size:1.8rem; margin-bottom:8px;">Admin OS</h1>
+      <p style="color:var(--os-text-sub); font-size:0.9rem; margin-bottom:30px;">Sign in to access control center.</p>
+      
+      <button onclick="loginWithGoogle()" style="width:100%; padding:14px; border-radius:12px; border:none; background:#fff; color:#000; font-weight:600; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width="20"> Continue with Google
+      </button>
+    </div>
+  </div>
+
+  <!-- BOTTOM SHEET: CARD EDITOR -->
+  <div class="bottom-sheet-overlay" id="card-modal">
+    <div class="bottom-sheet">
+      <div class="sheet-header">
+        <button class="sheet-close" onclick="closeSheet('card-modal')">Cancel</button>
+        <div class="sheet-title" id="modal-title">Edit Reward</div>
+        <button class="sheet-close action" onclick="document.getElementById('card-form').requestSubmit()">Save</button>
       </div>
-
-      <form id="card-form">
-        <input type="hidden" id="card-edit-id" />
-        <div class="form-grid">
-          <div class="form-group col-span-2">
-            <label>Card Title / Name *</label>
-            <input type="text" id="card-title" required placeholder="e.g. FREE REDEEM CODE WHATSAPP" />
-          </div>
-
-          <div class="form-group">
-            <label>Category *</label>
-            <select id="card-category" required></select>
-          </div>
-
-          <div class="form-group">
-            <label>Badge / Tag Text</label>
-            <input type="text" id="card-badge" placeholder="e.g. VIP, HOT" />
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Card Image URL (HTTPS) *</label>
-            <input type="url" id="card-image-url" required placeholder="https://example.com/images/banner.jpg" />
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Description (Optional)</label>
-            <textarea id="card-desc" rows="2" placeholder="Brief rewards info or instructions..."></textarea>
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Button Label *</label>
-            <input type="text" id="card-btn-text" required value="MESSAGE NOW" />
-          </div>
-
-          <!-- HTML vs URL Action Feature -->
-          <div class="form-group col-span-2" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <label style="color:#fff;"><i class="fa-solid fa-link"></i> Button Action / Destination *</label>
-            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
-              Choose whether the button opens an external link OR renders Custom HTML Code live on the page.
-            </p>
-            
-            <div class="action-type-tabs">
-              <div class="action-tab active" id="tab-url" onclick="switchActionType('url')">URL Link</div>
-              <div class="action-tab" id="tab-html" onclick="switchActionType('html')">Single HTML Code</div>
-            </div>
-            
-            <input type="hidden" id="card-action-type" value="url" />
-            
-            <div id="action-input-url">
-              <input type="url" id="card-btn-url" placeholder="https://yourpage.com/claim" />
-            </div>
-            
-            <div id="action-input-html" style="display:none;">
-              <textarea id="card-btn-html" class="code-editor" rows="6" placeholder="<!DOCTYPE html>\n<html>\n<body>\n  <h1>Custom Live Render</h1>\n</body>\n</html>"></textarea>
-            </div>
-          </div>
+      <div class="sheet-content">
+        <!-- Form exactly matching the 6 requested fields -->
+        <form id="card-form" onsubmit="saveCard(event)">
+          <input type="hidden" id="c-id" />
           
-          <div class="form-group">
-            <label>Display Order</label>
-            <input type="number" id="card-order" value="1" min="1" step="1" />
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select id="card-status">
-              <option value="active">Active (Visible)</option>
-              <option value="inactive">Inactive (Hidden)</option>
-            </select>
-          </div>
+          <label style="font-size:0.8rem; color:var(--os-text-sub); font-weight:600; margin-bottom:8px; display:block;">Card Title / Name *</label>
+          <input type="text" id="c-title" class="input-block" required placeholder="e.g. FREE REDEEM CODE WHATSAPP" />
 
-          <!-- Timer Configuration -->
-          <div class="form-group col-span-2" style="background: rgba(0,0,0,0.25); padding: 1rem; border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.15);">
-             <label class="switch-wrap" style="margin: 0; color: #fff;">
-               <span class="switch"><input type="checkbox" id="card-timer-toggle" /><span class="slider"></span></span>
-               <span>Enable Countdown Timer</span>
+          <label style="font-size:0.8rem; color:var(--os-text-sub); font-weight:600; margin-bottom:8px; display:block;">Badge / Tag Text</label>
+          <input type="text" id="c-badge" class="input-block" placeholder="e.g. BUNDLE" />
+
+          <label style="font-size:0.8rem; color:var(--os-text-sub); font-weight:600; margin-bottom:8px; display:block;">Card Image URL (HTTPS) *</label>
+          <div style="display:flex; gap:10px; width:100%;">
+             <input type="url" id="c-img" class="input-block" style="margin:0;" required placeholder="https://..." />
+             <label class="btn-main small" style="cursor:pointer;" title="Upload Image">
+               <i class="fa-solid fa-upload"></i>
+               <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'c-img')">
              </label>
-             <div id="timer-fields" style="display: none; margin-top:15px;" class="form-grid">
-               <div class="form-group col-span-2">
-                 <label>Set Specific Expiry (Timestamp)</label>
-                 <input type="datetime-local" id="card-timer-datetime" />
-               </div>
-             </div>
           </div>
-        </div>
+          <br>
 
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('card-modal')">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="btn-save-card">Save Card</button>
-        </div>
-      </form>
+          <hr style="border:none; border-top:1px solid var(--os-border); margin: 20px 0;">
+
+          <!-- BUTTON ACTION SETUP -->
+          <label style="font-size:0.8rem; color:var(--os-primary); font-weight:700; margin-bottom:8px; display:block;"><i class="fa-solid fa-bolt"></i> Button Settings</label>
+          <input type="text" id="c-btn-txt" class="input-block" required value="MESSAGE NOW" placeholder="Button Label" />
+          
+          <div class="segmented-control">
+            <div class="seg-btn active" id="seg-url" onclick="setBtnType('url')">URL Link</div>
+            <div class="seg-btn" id="seg-html" onclick="setBtnType('html')">HTML Popup</div>
+          </div>
+          <input type="hidden" id="c-btn-type" value="url" />
+          
+          <div id="c-url-box">
+             <input type="url" id="c-url-val" class="input-block" placeholder="Enter target URL..." />
+          </div>
+          <div id="c-html-box" style="display:none;">
+             <textarea id="c-html-val" class="input-block" rows="4" placeholder="Paste Custom HTML Code here..."></textarea>
+          </div>
+
+          <hr style="border:none; border-top:1px solid var(--os-border); margin: 20px 0;">
+
+          <!-- FAKE COUNTDOWN TIMER -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div>
+              <div style="font-weight:600; font-size:0.9rem;">Fake Countdown Timer</div>
+              <div style="font-size:0.75rem; color:var(--os-text-sub);">Shows a running timer whenever user opens the page</div>
+            </div>
+            <label class="os-switch"><input type="checkbox" id="c-timer-en" onchange="document.getElementById('c-timer-box').style.display=this.checked?'block':'none'"><span class="os-slider"></span></label>
+          </div>
+          <div id="c-timer-box" style="display:none; margin-bottom:16px;">
+            <input type="text" id="c-timer-val" class="input-block" placeholder="e.g. 01:59:03" />
+          </div>
+
+        </form>
+      </div>
     </div>
   </div>
 
-  <!-- 5. LIVE HTML / USER PREVIEW MODAL -->
-  <div class="modal-backdrop" id="preview-modal">
-    <div class="modal-dialog glass-panel" style="max-width: 420px; text-align:center;">
-      <div class="modal-header">
-        <h3 class="vip-title-font"><i class="fa-solid fa-mobile-screen"></i> Card Display Preview</h3>
-        <button class="close-modal-btn" onclick="closeModal('preview-modal')"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div id="visitor-preview-box" style="background: var(--bg-surface); border-radius: 16px; padding: 15px; border: 1px solid var(--border-color);">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-  </div>
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast"><i id="toast-icon" class="fa-solid fa-circle-check"></i> <span id="toast-msg">Saved successfully!</span></div>
 
-  <!-- HTML RENDERER MODAL (For playing custom code) -->
-  <div class="modal-backdrop" id="html-render-modal">
-    <div class="modal-dialog glass-panel" style="max-width: 900px; width: 95%;">
-      <div class="modal-header">
-        <h3 class="vip-title-font"><i class="fa-solid fa-code"></i> Live HTML Code Player</h3>
-        <button class="close-modal-btn" onclick="closeModal('html-render-modal')"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <!-- Iframe to safely sandbox and render user HTML -->
-      <iframe id="html-preview-iframe" class="html-preview-frame"></iframe>
-    </div>
-  </div>
-
-  <!-- CATEGORIES MODAL -->
-  <div class="modal-backdrop" id="categories-modal">
-    <div class="modal-dialog glass-panel" style="max-width: 450px;">
-      <div class="modal-header">
-        <h3 class="vip-title-font"><i class="fa-solid fa-tags"></i> Categories</h3>
-        <button class="close-modal-btn" onclick="closeModal('categories-modal')"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div style="display: flex; gap: 8px; margin-bottom:15px;">
-        <input type="text" id="new-cat-name" placeholder="New Category Name" />
-        <button class="btn btn-primary" id="btn-add-cat">Add</button>
-      </div>
-      <div id="categories-list-render" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- LOGIC SCRIPT -->
   <script>
-    // --- FIREBASE CONFIGURATION ---
+    // --- FIREBASE INIT ---
     const firebaseConfig = {
-  apiKey: "AIzaSyCE_Y-b-UmrmAIMk4Q6EAGlFt4RqCEGG9I",
-  authDomain: "ssssj-e81b8.firebaseapp.com",
-  databaseURL: "https://ssssj-e81b8-default-rtdb.firebaseio.com",
-  projectId: "ssssj-e81b8",
-  storageBucket: "ssssj-e81b8.firebasestorage.app",
-  messagingSenderId: "992557501421",
-  appId: "1:992557501421:web:1adc5f10bb84a68118b5e4",
-  measurementId: "G-VYQKMS09Y4"
-};
-
-    const AUTHORIZED_ADMIN_EMAIL = "mksk26066@gmail.com";
-
+      apiKey: "AIzaSyCE_Y-b-UmrmAIMk4Q6EAGlFt4RqCEGG9I",
+      authDomain: "ssssj-e81b8.firebaseapp.com",
+      databaseURL: "https://ssssj-e81b8-default-rtdb.firebaseio.com",
+      projectId: "ssssj-e81b8",
+      storageBucket: "ssssj-e81b8.firebasestorage.app"
+    };
+    const ADMIN_EMAIL = "mksk26066@gmail.com";
+    
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
-
-    let state = {
-      currentUser: null, cards: {}, categories: {}, settings: {},
-      filterText: '', filterCategory: 'ALL'
-    };
-
-    // --- UTILITIES ---
-    function showToast(msg, type = 'info') {
-      const c = document.getElementById('toast-container');
-      const t = document.createElement('div');
-      t.className = `toast`;
-      t.style.borderLeftColor = type === 'success' ? 'var(--accent-emerald)' : type==='error' ? 'var(--accent-rose)' : 'var(--accent-primary)';
-      t.innerHTML = `<span>${msg}</span>`;
-      c.appendChild(t);
-      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3500);
-    }
-    const openModal = id => document.getElementById(id).style.display = 'flex';
-    const closeModal = id => document.getElementById(id).style.display = 'none';
-    const escapeHtml = str => String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'})[m]);
+    
+    let dbData = { cards: {}, settings: {} };
 
     // --- AUTHENTICATION ---
     auth.onAuthStateChanged(user => {
-      if (user && (user.email||'').toLowerCase() === AUTHORIZED_ADMIN_EMAIL.toLowerCase()) {
-        state.currentUser = user;
-        document.getElementById('auth-view').style.display = 'none';
-        document.getElementById('app-view').style.display = 'block';
-        attachRealtimeListeners();
+      if (user && (user.email||'').toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+        document.getElementById('auth-screen').style.display = 'none';
+        startListeners();
       } else {
         if(user) auth.signOut();
-        document.getElementById('auth-view').style.display = 'flex';
-        document.getElementById('app-view').style.display = 'none';
+        document.getElementById('auth-screen').style.display = 'flex';
       }
     });
 
-    document.getElementById('btn-google-login').addEventListener('click', () => {
-      auth.signInWithPopup(googleProvider).catch(err => {
-        if(err.code === 'auth/popup-blocked') auth.signInWithRedirect(googleProvider);
-        else alert(err.message);
-      });
-    });
-    document.getElementById('btn-logout').addEventListener('click', () => auth.signOut());
-
-    // --- DATABASE SYNC ---
-    function attachRealtimeListeners() {
-      db.ref('settings').on('value', snap => {
-        state.settings = snap.val() || {};
-        applyGlobalSettings();
-      });
-      db.ref('cards').on('value', snap => {
-        state.cards = snap.val() || {};
-        renderDashboard();
-      });
-      db.ref('categories').on('value', snap => {
-        state.categories = snap.val() || {};
-        renderCategories();
-      });
+    function loginWithGoogle() {
+      auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(err => showToast(err.message, true));
     }
 
-    // --- SETTINGS ENGINE (UI Customize) ---
-    function applyGlobalSettings() {
-      const s = state.settings;
-      // CSS Vars
-      if(s.themeBg) document.documentElement.style.setProperty('--bg-base', s.themeBg);
-      if(s.themeAccent) document.documentElement.style.setProperty('--accent-primary', s.themeAccent);
+    // --- UI INTERACTIONS ---
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-view').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      el.classList.add('active');
       
-      // Branding
-      document.getElementById('brand-title').textContent = s.siteName || 'FF REWARDS';
-      if(s.logoUrl) {
-        document.getElementById('brand-icon-default').style.display = 'none';
-        document.getElementById('brand-logo-img').src = s.logoUrl;
-        document.getElementById('brand-logo-img').style.display = 'block';
-      } else {
-        document.getElementById('brand-icon-default').style.display = 'block';
-        document.getElementById('brand-logo-img').style.display = 'none';
-      }
-
-      // Online/Offline Status Update
-      const badge = document.getElementById('global-status-badge');
-      const bText = document.getElementById('global-status-text');
-      const isOnline = s.isOnline !== false; // Default true
-      if(isOnline) {
-        badge.className = 'global-status status-on';
-        bText.textContent = 'ONLINE';
-      } else {
-        badge.className = 'global-status status-off';
-        bText.textContent = 'OFFLINE (MAINTENANCE)';
-      }
-
-      // Populate Settings Modal form
-      document.getElementById('set-site-name').value = s.siteName || '';
-      document.getElementById('set-logo-url').value = s.logoUrl || '';
-      document.getElementById('set-global-status').checked = isOnline;
-      document.getElementById('set-theme-accent').value = s.themeAccent || '#8b5cf6';
-      document.getElementById('set-theme-bg').value = s.themeBg || '#08090e';
-      
-      if(s.logoUrl) {
-          document.getElementById('set-logo-preview').style.display = 'block';
-          document.getElementById('set-logo-preview').querySelector('img').src = s.logoUrl;
-      }
+      const fab = document.getElementById('fab-add');
+      if(tabId === 'home') fab.classList.remove('hidden');
+      else fab.classList.add('hidden');
     }
 
-    // Logo Base64 File Converter
-    document.getElementById('set-logo-file').addEventListener('change', function(e) {
-      const file = e.target.files[0];
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      document.getElementById('toast-icon').className = isError ? "fa-solid fa-circle-xmark" : "fa-solid fa-circle-check";
+      document.getElementById('toast-icon').style.color = isError ? "var(--os-danger)" : "var(--os-success)";
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function openSheet(id) { document.getElementById(id).classList.add('active'); }
+    function closeSheet(id) { document.getElementById(id).classList.remove('active'); }
+
+    // --- IMAGE UPLOADER (Base64 File Reader) ---
+    // Converting image to Base64 text immediately directly assigns it to URL field.
+    // Extremely reliable, bypasses Firebase Storage Rules entirely.
+    window.handleImageUpload = function(event, targetInputId) {
+      const file = event.target.files[0];
       if(!file) return;
-      if(file.size > 1024 * 500) { showToast('Image too large. Max 500KB.', 'error'); return; }
+      document.getElementById('loading-overlay').style.display = 'flex';
+      
       const reader = new FileReader();
-      reader.onload = ev => {
-        document.getElementById('set-logo-url').value = ev.target.result;
-        document.getElementById('set-logo-preview').style.display = 'block';
-        document.getElementById('set-logo-preview').querySelector('img').src = ev.target.result;
+      reader.onload = function(e) {
+        document.getElementById(targetInputId).value = e.target.result;
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast("Image loaded! Remember to save.");
+      };
+      reader.onerror = function() {
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast("Failed to process image.", true);
       };
       reader.readAsDataURL(file);
-    });
+    };
 
-    document.getElementById('settings-form').addEventListener('submit', async e => {
-      e.preventDefault();
+    // --- REALTIME DATA SYNC ---
+    function startListeners() {
       try {
-        await db.ref('settings').update({
-          siteName: document.getElementById('set-site-name').value,
-          logoUrl: document.getElementById('set-logo-url').value,
-          isOnline: document.getElementById('set-global-status').checked,
-          themeAccent: document.getElementById('set-theme-accent').value,
-          themeBg: document.getElementById('set-theme-bg').value,
+        db.ref('/').on('value', snap => {
+          const data = snap.val() || {};
+          dbData.cards = data.cards || {};
+          dbData.settings = data.settings || {};
+          renderDashboard();
+          populateSettings(); // Realtime sync updates UI instantly
+        }, error => {
+          console.error("Firebase Read Error:", error);
+          document.getElementById('cards-container').innerHTML = `<div style="text-align:center; padding:40px; color:var(--os-danger);">Error connecting to database. Check permissions.</div>`;
         });
-        showToast('Global settings updated and applied!', 'success');
-        closeModal('settings-modal');
-      } catch (err) { showToast(err.message, 'error'); }
-    });
+      } catch(e) { console.error("Listener error:", e); }
+    }
 
-    // --- DASHBOARD RENDER ---
-    document.getElementById('search-input').addEventListener('input', e => { state.filterText = e.target.value; renderDashboard(); });
-    document.getElementById('filter-category').addEventListener('change', e => { state.filterCategory = e.target.value; renderDashboard(); });
-
+    // --- RENDER CARDS ---
     function renderDashboard() {
-      let cards = Object.entries(state.cards).map(([id, val]) => ({id, ...val}));
-      
-      // Filter
-      cards = cards.filter(c => {
-        const mText = !state.filterText || (c.name||'').toLowerCase().includes(state.filterText.toLowerCase());
-        const mCat = state.filterCategory === 'ALL' || c.category === state.filterCategory;
-        return mText && mCat;
-      });
-      // Sort
-      cards.sort((a,b) => (Number(a.order)||1) - (Number(b.order)||1));
-
       const container = document.getElementById('cards-container');
+      const cards = Object.entries(dbData.cards).map(([id, val]) => ({id, ...val})).reverse();
+      
+      document.getElementById('card-count-text').innerText = `${cards.length} items`;
+      
+      if(!cards.length) {
+        container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--os-text-sub);">No cards found. Tap + to add.</div>`;
+        return;
+      }
+
       container.innerHTML = '';
-      if(!cards.length) { container.innerHTML = '<div style="grid-column:1/-1;text-align:center;">No cards found.</div>'; return; }
+      cards.forEach(c => {
+        let subTxt = '';
+        if(c.actionType === 'html') subTxt = `<i class="fa-solid fa-code" style="color:var(--os-primary)"></i> HTML Popup`;
+        else subTxt = `<i class="fa-solid fa-link" style="color:var(--os-primary)"></i> URL Link`;
 
-      cards.forEach(card => {
-        const div = document.createElement('div');
-        div.className = 'item-card glass-panel';
-        
-        // Timer Check
-        let timerTxt = '';
-        if(card.timerEnabled && card.timerExpiry) {
-           const left = Math.max(0, Math.floor((card.timerExpiry - Date.now())/1000));
-           timerTxt = left > 0 ? `<i class="fa-solid fa-stopwatch"></i> ${left}s left` : 'Expired';
-        }
-        
-        // Check Action Type Badge
-        const actBadge = card.actionType === 'html' ? `<span style="color:var(--accent-emerald);font-size:0.75rem;"><i class="fa-solid fa-code"></i> HTML</span>` : `<span style="color:var(--accent-cyan);font-size:0.75rem;"><i class="fa-solid fa-link"></i> URL</span>`;
-
-        div.innerHTML = `
-          <div class="card-thumb-wrap">
-            <img src="${escapeHtml(card.imageUrl)}" class="card-thumb" onerror="this.src='https://placehold.co/600x400/10121d/8b5cf6?text=No+Image'"/>
-            <span class="status-pill" style="background:rgba(0,0,0,0.6);">${card.status}</span>
-            ${card.badge ? `<span style="position:absolute;top:10px;left:10px;background:var(--accent-primary);padding:3px 8px;border-radius:4px;font-size:0.7rem;font-weight:bold;">${escapeHtml(card.badge)}</span>` : ''}
-          </div>
-          <div class="card-content">
-            <div>
-              <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-dim); margin-bottom:5px;">
-                <span>${escapeHtml(card.category)}</span>
-                ${actBadge}
-              </div>
-              <h4 class="card-title">${escapeHtml(card.name)}</h4>
-              ${timerTxt ? `<div style="font-size:0.8rem; color:var(--accent-primary); margin-bottom:10px;">${timerTxt}</div>` : ''}
+        container.innerHTML += `
+          <div class="list-card">
+            <img src="${c.imageUrl}" class="list-card-img" onerror="this.src='https://placehold.co/100x100?text=No+Img'" />
+            <div class="list-card-content">
+              <div class="list-card-title">${c.name}</div>
+              <div class="list-card-sub"><div class="status-dot status-active"></div> ${subTxt}</div>
             </div>
-            <div class="card-actions">
-              <button class="btn btn-secondary btn-sm" style="flex:1" onclick="previewUI('${card.id}')"><i class="fa-solid fa-eye"></i></button>
-              <button class="btn btn-primary btn-sm" style="flex:1" onclick="editCard('${card.id}')"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-danger btn-sm" onclick="delCard('${card.id}')"><i class="fa-solid fa-trash"></i></button>
+            <div class="list-actions">
+              <button class="icon-btn edit" onclick="openCardEditor('${c.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="icon-btn delete" onclick="deleteCard('${c.id}')"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `;
-        container.appendChild(div);
       });
     }
 
-    // --- CARD CRUD & URL/HTML LOGIC ---
-    function switchActionType(type) {
-      document.getElementById('card-action-type').value = type;
-      if(type === 'html') {
-        document.getElementById('tab-html').className = 'action-tab active';
-        document.getElementById('tab-url').className = 'action-tab';
-        document.getElementById('action-input-html').style.display = 'block';
-        document.getElementById('action-input-url').style.display = 'none';
+    // --- CARD EDITOR LOGIC ---
+    function setBtnType(type) {
+      document.getElementById('c-btn-type').value = type;
+      if(type === 'url') {
+        document.getElementById('seg-url').classList.add('active');
+        document.getElementById('seg-html').classList.remove('active');
+        document.getElementById('c-url-box').style.display = 'block';
+        document.getElementById('c-html-box').style.display = 'none';
       } else {
-        document.getElementById('tab-url').className = 'action-tab active';
-        document.getElementById('tab-html').className = 'action-tab';
-        document.getElementById('action-input-url').style.display = 'block';
-        document.getElementById('action-input-html').style.display = 'none';
+        document.getElementById('seg-html').classList.add('active');
+        document.getElementById('seg-url').classList.remove('active');
+        document.getElementById('c-url-box').style.display = 'none';
+        document.getElementById('c-html-box').style.display = 'block';
       }
     }
 
-    document.getElementById('btn-add-card').addEventListener('click', () => {
-      document.getElementById('card-form').reset();
-      document.getElementById('card-edit-id').value = '';
-      switchActionType('url');
-      document.getElementById('timer-fields').style.display = 'none';
-      openModal('card-modal');
-    });
-
-    document.getElementById('card-timer-toggle').addEventListener('change', e => {
-      document.getElementById('timer-fields').style.display = e.target.checked ? 'grid' : 'none';
-    });
-
-    window.editCard = (id) => {
-      const c = state.cards[id];
-      if(!c) return;
-      document.getElementById('card-edit-id').value = id;
-      document.getElementById('card-title').value = c.name || '';
-      document.getElementById('card-category').value = c.category || '';
-      document.getElementById('card-badge').value = c.badge || '';
-      document.getElementById('card-image-url').value = c.imageUrl || '';
-      document.getElementById('card-desc').value = c.description || '';
-      document.getElementById('card-btn-text').value = c.buttonText || '';
+    window.openCardEditor = (id = null) => {
+      const f = document.getElementById('card-form');
+      f.reset();
+      document.getElementById('c-id').value = id || '';
+      document.getElementById('modal-title').innerText = id ? "Edit Reward" : "New Reward";
       
-      // Handle Action Type
-      const aType = c.actionType || 'url';
-      switchActionType(aType);
-      if(aType === 'html') {
-        document.getElementById('card-btn-html').value = c.actionValue || '';
-        document.getElementById('card-btn-url').value = '';
+      if(id && dbData.cards[id]) {
+        const c = dbData.cards[id];
+        document.getElementById('c-title').value = c.name || '';
+        document.getElementById('c-badge').value = c.badge || '';
+        document.getElementById('c-img').value = c.imageUrl || '';
+        document.getElementById('c-btn-txt').value = c.buttonText || 'MESSAGE NOW';
+        
+        setBtnType(c.actionType || 'url');
+        if(c.actionType === 'html') {
+          document.getElementById('c-html-val').value = c.actionValue || '';
+        } else {
+          document.getElementById('c-url-val').value = c.actionValue || '';
+        }
+        
+        document.getElementById('c-timer-en').checked = !!c.timerEnabled;
+        document.getElementById('c-timer-box').style.display = c.timerEnabled ? 'block' : 'none';
+        if(c.timerTime) {
+           document.getElementById('c-timer-val').value = c.timerTime;
+        }
       } else {
-        document.getElementById('card-btn-url').value = c.actionValue || '';
-        document.getElementById('card-btn-html').value = '';
+        setBtnType('url');
       }
-      
-      document.getElementById('card-order').value = c.order || 1;
-      document.getElementById('card-status').value = c.status || 'active';
-
-      document.getElementById('card-timer-toggle').checked = !!c.timerEnabled;
-      document.getElementById('timer-fields').style.display = c.timerEnabled ? 'grid' : 'none';
-      if(c.timerExpiry) {
-        const d = new Date(c.timerExpiry);
-        document.getElementById('card-timer-datetime').value = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16);
-      } else {
-        document.getElementById('card-timer-datetime').value = '';
-      }
-      openModal('card-modal');
+      openSheet('card-modal');
     };
 
-    document.getElementById('card-form').addEventListener('submit', async e => {
+    window.saveCard = async (e) => {
       e.preventDefault();
-      const id = document.getElementById('card-edit-id').value;
-      const aType = document.getElementById('card-action-type').value;
-      const aVal = aType === 'html' ? document.getElementById('card-btn-html').value : document.getElementById('card-btn-url').value;
+      document.getElementById('loading-overlay').style.display = 'flex'; // Fullscreen block during save
 
-      if(aType === 'html' && !aVal.trim()) { showToast('HTML code cannot be empty!', 'error'); return; }
-
-      let timerExpiry = null;
-      const tEnabled = document.getElementById('card-timer-toggle').checked;
-      if(tEnabled) {
-        const dt = document.getElementById('card-timer-datetime').value;
-        if(dt) timerExpiry = new Date(dt).getTime();
+      const id = document.getElementById('c-id').value;
+      const aType = document.getElementById('c-btn-type').value;
+      let aVal = '';
+      
+      if(aType === 'url') {
+         aVal = document.getElementById('c-url-val').value;
+      } else if (aType === 'html') {
+         aVal = document.getElementById('c-html-val').value;
       }
 
+      let tTime = null;
+      const tEn = document.getElementById('c-timer-en').checked;
+      if(tEn && document.getElementById('c-timer-val').value) {
+        tTime = document.getElementById('c-timer-val').value;
+      }
+
+      // Payload strictly matching the 6 requested fields only
       const payload = {
-        name: document.getElementById('card-title').value.trim(),
-        category: document.getElementById('card-category').value,
-        badge: document.getElementById('card-badge').value.trim(),
-        imageUrl: document.getElementById('card-image-url').value.trim(),
-        description: document.getElementById('card-desc').value.trim(),
-        buttonText: document.getElementById('card-btn-text').value.trim(),
+        name: document.getElementById('c-title').value,
+        badge: document.getElementById('c-badge').value,
+        imageUrl: document.getElementById('c-img').value,
+        buttonText: document.getElementById('c-btn-txt').value,
         actionType: aType,
         actionValue: aVal,
-        order: parseInt(document.getElementById('card-order').value)||1,
-        status: document.getElementById('card-status').value,
-        timerEnabled: tEnabled,
-        timerExpiry: timerExpiry
+        timerEnabled: tEn,
+        timerTime: tTime
       };
 
       try {
-        if(id) await db.ref(`cards/${id}`).update(payload);
-        else await db.ref('cards').push(payload);
-        showToast('Card saved!', 'success');
-        closeModal('card-modal');
-      } catch(err) { showToast(err.message, 'error'); }
-    });
-
-    window.delCard = id => {
-      if(confirm('Delete this card permanently?')) {
-        db.ref(`cards/${id}`).remove().then(()=>showToast('Deleted', 'success'));
+        if(id) {
+          await db.ref(`cards/${id}`).update(payload);
+        } else {
+          await db.ref('cards').push(payload);
+        }
+        
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast("Reward saved successfully!");
+        closeSheet('card-modal');
+        // No manual refresh needed due to realtime sync
+      } catch(err) { 
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast(err.message, true); 
       }
     };
 
-    // --- LIVE PREVIEW & HTML PLAYER ---
-    window.previewUI = id => {
-      const c = state.cards[id];
-      if(!c) return;
-      const box = document.getElementById('visitor-preview-box');
-      
-      // Determine what the button should do based on Customization
-      let actionBtnHtml = '';
-      if(c.actionType === 'html') {
-         // Button will trigger the Live HTML Player
-         actionBtnHtml = `<button onclick="playHtml('${id}')" style="width:100%; padding:12px; background:var(--accent-primary); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-play"></i> ${escapeHtml(c.buttonText)} (Plays Code)</button>`;
-      } else {
-         // Button acts as normal URL Link
-         actionBtnHtml = `<a href="${escapeHtml(c.actionValue)}" target="_blank" style="display:block; width:100%; padding:12px; background:var(--accent-primary); color:#fff; text-decoration:none; border-radius:8px; font-weight:bold;"><i class="fa-solid fa-arrow-up-right-from-square"></i> ${escapeHtml(c.buttonText)}</a>`;
-      }
-
-      box.innerHTML = `
-        <img src="${escapeHtml(c.imageUrl)}" style="width:100%; border-radius:12px; margin-bottom:15px; height:180px; object-fit:cover;" />
-        <h3 style="margin-bottom:8px; font-size:1.3rem;">${escapeHtml(c.name)}</h3>
-        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">${escapeHtml(c.description)}</p>
-        ${actionBtnHtml}
-      `;
-      openModal('preview-modal');
-    };
-
-    window.playHtml = id => {
-      const c = state.cards[id];
-      if(!c || c.actionType !== 'html') return;
-      
-      const iframe = document.getElementById('html-preview-iframe');
-      // Using srcdoc to render raw HTML code safely in an iframe natively!
-      iframe.srcdoc = c.actionValue;
-      
-      openModal('html-render-modal');
-    };
-
-    // --- CATEGORIES ---
-    function renderCategories() {
-      const selForm = document.getElementById('card-category');
-      const selFilt = document.getElementById('filter-category');
-      const list = document.getElementById('categories-list-render');
-      
-      selForm.innerHTML = '';
-      selFilt.innerHTML = '<option value="ALL">All Categories</option>';
-      list.innerHTML = '';
-
-      const cats = Object.entries(state.categories);
-      const names = new Set(cats.map(x => x[1].name || x[1]));
-      ["Free Fire", "VIP Proxy", "General"].forEach(n => names.add(n));
-
-      names.forEach(n => {
-        selForm.innerHTML += `<option value="${n}">${n}</option>`;
-        selFilt.innerHTML += `<option value="${n}">${n}</option>`;
-      });
-
-      cats.forEach(([id, c]) => {
-        const n = c.name || c;
-        list.innerHTML += `<div style="background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:15px; font-size:0.8rem; display:flex; gap:10px; align-items:center;">
-          ${n} <i class="fa-solid fa-xmark" style="color:var(--accent-rose); cursor:pointer;" onclick="db.ref('categories/${id}').remove()"></i>
-        </div>`;
-      });
+    window.deleteCard = async (id) => {
+       document.getElementById('loading-overlay').style.display = 'flex';
+       try {
+         await db.ref(`cards/${id}`).remove();
+         document.getElementById('loading-overlay').style.display = 'none';
+         showToast("Deleted successfully!");
+       } catch(err) {
+         document.getElementById('loading-overlay').style.display = 'none';
+         showToast(err.message, true); 
+       }
     }
 
-    document.getElementById('btn-add-cat').addEventListener('click', () => {
-      const v = document.getElementById('new-cat-name').value.trim();
-      if(v) db.ref('categories').push({name: v}).then(() => document.getElementById('new-cat-name').value = '');
-    });
+    // --- SETTINGS LOGIC (Populate & Save) ---
+    function populateSettings() {
+      const s = dbData.settings;
+      
+      // Global Settings
+      document.getElementById('set-show-name').checked = s.showSiteName !== false; // Default true
+      document.getElementById('set-show-logo').checked = s.showLogo !== false;     // Default true
+      document.getElementById('set-site-name').value = s.siteName || '';
+      document.getElementById('set-logo-url').value = s.logoUrl || '';
+      document.getElementById('set-theme-accent').value = s.themeAccent || '#00f2ea';
+      document.getElementById('set-theme-bg').value = s.themeBg || '#090910';
+      
+      const isOnline = s.isOnline !== false;
+      document.getElementById('set-global-status').checked = isOnline;
+      const ind = document.getElementById('header-status-indicator');
+      ind.style.background = isOnline ? 'var(--os-success)' : 'var(--os-danger)';
+      ind.style.boxShadow = isOnline ? '0 0 8px var(--os-success)' : 'none';
+
+      document.getElementById('set-sec-copy').checked = s.secPreventCopy !== false;
+      document.getElementById('set-sec-drag').checked = s.secPreventDrag !== false;
+
+      // Design Settings
+      document.getElementById('set-hero-heading').value = s.heroHeading || '';
+      document.getElementById('set-hero-sub').value = s.heroSubHeading || '';
+      document.getElementById('set-footer-logo-url').value = s.footerLogoUrl || '';
+      
+      // Footer textareas
+      const parseList = (arr) => (arr||[]).map(i => `${i.title}, ${i.url}`).join('\n');
+      if(s.footerLinks) {
+         document.getElementById('set-footer-col1').value = parseList(s.footerLinks.col1);
+         document.getElementById('set-footer-col2').value = parseList(s.footerLinks.col2);
+         document.getElementById('set-footer-col3').value = parseList(s.footerLinks.col3);
+      }
+    }
+
+    window.saveGlobalSettings = async () => {
+      document.getElementById('loading-overlay').style.display = 'flex';
+      try {
+        await db.ref('settings').update({
+          showSiteName: document.getElementById('set-show-name').checked,
+          showLogo: document.getElementById('set-show-logo').checked,
+          siteName: document.getElementById('set-site-name').value,
+          logoUrl: document.getElementById('set-logo-url').value,
+          themeAccent: document.getElementById('set-theme-accent').value,
+          themeBg: document.getElementById('set-theme-bg').value,
+          isOnline: document.getElementById('set-global-status').checked,
+          secPreventCopy: document.getElementById('set-sec-copy').checked,
+          secPreventDrag: document.getElementById('set-sec-drag').checked
+        });
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast("System settings saved!");
+      } catch(e) { 
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast("Error saving", true); 
+      }
+    };
+
+    window.saveDesignSettings = async () => {
+      document.getElementById('loading-overlay').style.display = 'flex';
+      const parseLines = (text) => {
+        return text.split('\n').filter(l => l.includes(',')).map(l => {
+          const parts = l.split(',');
+          return { title: parts[0].trim(), url: parts.slice(1).join(',').trim() };
+        });
+      };
+
+      try {
+        await db.ref('settings').update({
+          heroHeading: document.getElementById('set-hero-heading').value,
+          heroSubHeading: document.getElementById('set-hero-sub').value,
+          footerLogoUrl: document.getElementById('set-footer-logo-url').value,
+          footerLinks: {
+            col1: parseLines(document.getElementById('set-footer-col1').value),
+            col2: parseLines(document.getElementById('set-footer-col2').value),
+            col3: parseLines(document.getElementById('set-footer-col3').value)
+          }
+        });
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast("Design updated!");
+      } catch(e) { 
+        document.getElementById('loading-overlay').style.display = 'none';
+        showToast("Error saving", true); 
+      }
+    };
   </script>
 </body>
+</html>
+```
+
+---
+
+### 2. User Panel Code (मेन वेबसाइट)
+यहाँ यह पूरी तरह से एडमिन पैनल के साथ **सिंक** हो गया है। Header Name / Logo के Toggle, Footer Logo, और **Fake Timer Loop** सब एकदम सही काम करेंगे।
+
+```html:User Panel / Main Site:index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title x-data="globalSettings()" x-text="settings.siteName || 'FF REWARDS - VIP Access'">FF REWARDS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" />
+    
+    <style>
+      body {
+        font-family: 'Google Sans', sans-serif !important;
+        background-color: var(--bg-dark);
+        color: white;
+        overflow-x: hidden;
+      }
+      [x-cloak] { display: none !important; }
+      
+      /* Dynamic Theme Setup */
+      :root {
+          --primary: #00f2ea;
+          --bg-dark: #06070a;
+          --card-bg: #12141d;
+      }
+
+      /* Ambient Grid */
+      .bg-grid {
+          position: fixed;
+          top: 0; left: 0; width: 100vw; height: 100vh;
+          background-size: 40px 40px;
+          background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+          z-index: -1;
+          pointer-events: none;
+      }
+
+      /* Header Styling */
+      header {
+          background: #0d0f14;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+      }
+      
+      .logo-text {
+          font-family: 'Rajdhani', sans-serif;
+          font-size: 1.5rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          background: linear-gradient(to right, #FFD200, #FF5733);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+      }
+      
+      .logo-image {
+          max-height: 40px;
+          max-width: 150px;
+          object-fit: contain;
+          border-radius: 4px;
+      }
+
+      /* Action Button */
+      .action-btn {
+          background: linear-gradient(90deg, #ff0f59, #ff2a75);
+          color: white;
+          border: none;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: filter 0.2s ease;
+          width: 100%;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          box-shadow: 0 4px 15px rgba(255, 15, 89, 0.3);
+      }
+      .action-btn:hover { filter: brightness(1.1); }
+      .action-btn:active { transform: scale(0.98); }
+    </style>
+  </head>
+  <body x-data="firebaseApp()" x-init="initApp()" :style="getSecurityStyles()">
+    
+    <div class="bg-grid"></div>
+    
+    <!-- Header -->
+    <header class="py-4 px-4 sm:px-6 flex justify-between items-center shadow-md">
+      <div class="flex items-center gap-3">
+        <!-- Logo Visibility Control -->
+        <template x-if="settings.showLogo !== false && settings.logoUrl">
+          <img :src="settings.logoUrl" alt="Logo" class="logo-image" x-cloak />
+        </template>
+        
+        <!-- Text Name Visibility Control -->
+        <template x-if="settings.showSiteName !== false">
+          <span class="logo-text" x-text="settings.siteName || 'FF REWARDS'" x-cloak></span>
+        </template>
+      </div>
+      
+      <div x-show="settings.isOnline !== false" class="bg-[#0f2e24] border border-[#164a37] text-[#00ff9d] px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-[#00ff9d] shadow-[0_0_8px_#00ff9d] animate-pulse"></div>
+        ONLINE
+      </div>
+      <div x-show="settings.isOnline === false" class="bg-rose-900/30 border border-rose-900/50 text-rose-400 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-2" x-cloak>
+        MAINTENANCE
+      </div>
+    </header>
+
+    <!-- Maintenance Screen -->
+    <main x-show="settings.isOnline === false && !loading" class="flex flex-col items-center justify-center min-h-[70vh] text-center p-6" x-cloak>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-rose-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <h2 class="text-3xl font-bold mb-2">We'll be right back!</h2>
+        <p class="text-gray-400">System is undergoing scheduled maintenance.</p>
+    </main>
+
+    <!-- Main Content -->
+    <main x-show="settings.isOnline !== false && !loading" class="max-w-[800px] mx-auto p-4 sm:p-6 pb-20" x-cloak>
+      
+      <!-- Hero Texts -->
+      <div class="text-center mb-8 mt-4" x-show="settings.heroHeading || settings.heroSubHeading">
+        <h1 class="text-3xl font-bold uppercase mb-2" x-text="settings.heroHeading"></h1>
+        <p class="text-gray-400" x-text="settings.heroSubHeading"></p>
+      </div>
+      
+      <!-- Loader / Status -->
+      <div x-show="loading" class="flex justify-center p-10">
+          <div class="w-10 h-10 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <div x-show="errorMsg" class="text-center p-10 text-rose-500 font-bold" x-text="errorMsg"></div>
+
+      <!-- Cards Grid (Matching 643880.jpg style) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-show="!loading && !errorMsg">
+        <template x-for="card in cards" :key="card.id">
+          <div class="bg-[#10121a] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <!-- Image & Badge -->
+            <div class="relative w-full h-56 bg-black">
+              <img :src="card.imageUrl" class="w-full h-full object-cover opacity-90" onerror="this.src='https://placehold.co/600x400/10121d/8b5cf6?text=No+Image'" :style="settings.secPreventDrag ? 'pointer-events:none;' : ''" />
+              <span x-show="card.badge" class="absolute top-3 right-3 bg-[#00f2ea] text-black px-3 py-1 rounded shadow-md font-bold text-xs tracking-wider uppercase z-10" x-text="card.badge"></span>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-5 flex-1 flex flex-col">
+              <h3 class="text-white text-xl font-bold uppercase mb-5 leading-snug tracking-wide" x-text="card.name"></h3>
+              
+              <div class="mt-auto">
+                <!-- Fake Perpetual Timer ticking down visually -->
+                <div x-show="card.timerEnabled && card.timerTime" class="flex items-center justify-center gap-2 bg-[#171924] border border-gray-700/50 rounded-lg py-2.5 mb-3">
+                  <svg class="w-4 h-4 text-[#00f2ea]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span class="text-[#00f2ea] font-mono tracking-widest font-semibold" x-text="formatTime(card.localTimeLeft)"></span>
+                </div>
+                
+                <!-- Action Button -->
+                <button @click="handleAction(card)" class="action-btn" x-text="card.buttonText || 'MESSAGE NOW'"></button>
+              </div>
+            </div>
+          </div>
+        </template>
+        
+        <div x-show="cards.length === 0" class="col-span-full text-center p-10 text-gray-500">
+            No rewards currently available.
+        </div>
+      </div>
+    </main>
+
+    <!-- Custom HTML Popup Modal -->
+    <div x-show="showHtmlModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak>
+      <div class="relative w-full max-w-lg bg-white rounded-2xl overflow-hidden shadow-2xl text-black">
+        <button @click="showHtmlModal = false; htmlContent = ''" class="absolute top-3 right-3 w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-gray-700 z-50">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="w-full max-h-[85vh] overflow-y-auto" x-html="htmlContent"></div>
+      </div>
+    </div>
+
+    <!-- Firebase Connection Script for Alpine -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCE_Y-b-UmrmAIMk4Q6EAGlFt4RqCEGG9I",
+            authDomain: "ssssj-e81b8.firebaseapp.com",
+            databaseURL: "https://ssssj-e81b8-default-rtdb.firebaseio.com",
+            projectId: "ssssj-e81b8",
+            storageBucket: "ssssj-e81b8.firebasestorage.app",
+            messagingSenderId: "992557501421",
+            appId: "1:992557501421:web:1adc5f10bb84a68118b5e4"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function firebaseApp() {
+            return {
+                settings: {},
+                cards: [],
+                loading: true,
+                errorMsg: '',
+                timerInterval: null,
+                showHtmlModal: false,
+                htmlContent: '',
+
+                initApp() {
+                    // Sync Settings (Live Updates)
+                    db.ref('settings').on('value', snap => {
+                        this.settings = snap.val() || {};
+                        this.applyTheme();
+                    });
+
+                    // Sync Cards (Live Updates + Safe Parsing)
+                    db.ref('cards').on('value', snap => {
+                        try {
+                            const data = snap.val() || {};
+                            this.cards = Object.entries(data)
+                              .map(([id, val]) => ({ id, ...val }))
+                              .map(card => {
+                                  // Assign initial seconds for visual countdown based on Admin text
+                                  if(card.timerEnabled && card.timerTime) {
+                                      card.localTimeLeft = this.parseTimeStringToSeconds(card.timerTime);
+                                  } else {
+                                      card.localTimeLeft = 0;
+                                  }
+                                  return card;
+                              })
+                              .reverse(); // Show newest first
+                            
+                            this.loading = false;
+                            this.errorMsg = '';
+                            this.startTickers();
+                        } catch(e) {
+                            console.error(e);
+                            this.errorMsg = 'Error loading content format.';
+                            this.loading = false;
+                        }
+                    }, error => {
+                        this.errorMsg = 'Failed to connect to database.';
+                        this.loading = false;
+                    });
+                },
+
+                // Converts string "01:59:03" into total seconds
+                parseTimeStringToSeconds(timeStr) {
+                    if(!timeStr) return 0;
+                    const parts = timeStr.split(':').map(Number);
+                    if(parts.length === 3) return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+                    if(parts.length === 2) return (parts[0] * 60) + parts[1];
+                    if(parts.length === 1) return parts[0];
+                    return 7143; // Default 01:59:03 if parse fails
+                },
+
+                // Ticks down 1 second at a time
+                startTickers() {
+                    if(this.timerInterval) clearInterval(this.timerInterval);
+                    this.timerInterval = setInterval(() => {
+                        this.cards.forEach(card => {
+                            if(card.timerEnabled && card.localTimeLeft > 0) {
+                                card.localTimeLeft--;
+                            }
+                        });
+                    }, 1000);
+                },
+
+                // Formats seconds back to "01:59:03" display
+                formatTime(totalSeconds) {
+                    if(!totalSeconds || totalSeconds <= 0) return "00:00:00";
+                    const h = Math.floor(totalSeconds / 3600);
+                    const m = Math.floor((totalSeconds % 3600) / 60);
+                    const s = totalSeconds % 60;
+                    return [h, m, s].map(v => v < 10 ? "0" + v : v).join(":");
+                },
+
+                applyTheme() {
+                    const primary = this.settings.themeAccent || '#00f2ea';
+                    const bg = this.settings.themeBg || '#06070a';
+                    document.documentElement.style.setProperty('--primary', primary);
+                    document.documentElement.style.setProperty('--bg-dark', bg);
+                },
+
+                getSecurityStyles() {
+                    let style = '';
+                    if(this.settings.secPreventCopy !== false) {
+                        style += '-webkit-user-select:none; user-select:none;';
+                    }
+                    return style;
+                },
+
+                handleAction(card) {
+                    if (card.actionType === 'html') {
+                        // Open Custom HTML Modal
+                        this.htmlContent = card.actionValue || '<div class="p-10 text-center">No Content</div>';
+                        this.showHtmlModal = true;
+                    } else {
+                        // Regular URL Link
+                        if(card.actionValue) {
+                           window.location.href = card.actionValue;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Small helper for Global Title
+        function globalSettings() {
+            return {
+                settings: {},
+                init() {
+                    firebase.database().ref('settings').on('value', snap => {
+                        this.settings = snap.val() || {};
+                    });
+                }
+            }
+        }
+    </script>
+  </body>
 </html>
